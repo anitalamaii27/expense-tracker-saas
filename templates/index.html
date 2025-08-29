@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to ExpenseTracker{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Take Control of Your Finances</h1>
+                <p class="lead mb-4">Track expenses, create budgets, and gain insights into your spending habits with our powerful expense tracking platform.</p>
+                
+                <div class="features mb-5">
+                    <div class="feature-item mb-3">
+                        <i data-feather="pie-chart" class="text-primary me-3"></i>
+                        <span>Visual analytics and reporting</span>
+                    </div>
+                    <div class="feature-item mb-3">
+                        <i data-feather="target" class="text-primary me-3"></i>
+                        <span>Smart budgeting tools</span>
+                    </div>
+                    <div class="feature-item mb-3">
+                        <i data-feather="smartphone" class="text-primary me-3"></i>
+                        <span>Mobile-friendly design</span>
+                    </div>
+                    <div class="feature-item mb-3">
+                        <i data-feather="shield" class="text-primary me-3"></i>
+                        <span>Secure and private</span>
+                    </div>
+                </div>
+                
+                <a href="{{ url_for('replit_auth.login') }}" class="btn btn-primary btn-lg">
+                    <i data-feather="log-in" class="me-2"></i>
+                    Get Started
+                </a>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="dashboard-preview">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Monthly Overview</h5>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="stat-card">
+                                        <div class="stat-value">$2,450</div>
+                                        <div class="stat-label">Total Spent</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-card">
+                                        <div class="stat-value">$3,000</div>
+                                        <div class="stat-label">Budget</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="progress mt-3">
+                                <div class="progress-bar" style="width: 82%"></div>
+                            </div>
+                            <small class="text-muted">82% of budget used</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

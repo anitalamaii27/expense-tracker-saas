@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - ExpenseTracker{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i data-feather="bar-chart-2" class="me-2"></i>
+                Analytics
+            </h1>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Filter Options</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="yearSelect" class="form-label">Year</label>
+                            <select class="form-select" id="yearSelect">
+                                {% for year in range(2020, 2030) %}
+                                <option value="{{ year }}" {% if year == moment().year %}selected{% endif %}>{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="monthSelect" class="form-label">Month (for category breakdown)</label>
+                            <select class="form-select" id="monthSelect">
+                                {% for i in range(1, 13) %}
+                                <option value="{{ i }}" {% if i == moment().month %}selected{% endif %}>
+                                    {{ moment().month(i).format('MMMM') }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="updateCharts()">
+                        <i data-feather="refresh-cw" class="me-2"></i>
+                        Update Charts
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row">
+        <!-- Monthly Spending Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i data-feather="trending-up" class="me-2"></i>
+                        Monthly Spending Trends
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyChart" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Breakdown -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i data-feather="pie-chart" class="me-2"></i>
+                        Category Breakdown
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spending Summary -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i data-feather="list" class="me-2"></i>
+                        Spending Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="summaryCards">
+                        <!-- Summary cards will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+<script>
+    // Initialize charts when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCharts();
+    });
+</script>
+{% endblock %}
