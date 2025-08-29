@@ -63,10 +63,10 @@
                             {% else %}
                             <i data-feather="user" class="me-2"></i>
                             {% endif %}
-                            {{ current_user.first_name or 'User' }}
+                            {{ current_user.full_name }}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('replit_auth.logout') }}">
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
                                 <i data-feather="log-out" class="me-2"></i>Logout
                             </a></li>
                         </ul>

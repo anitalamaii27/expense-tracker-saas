@@ -7,9 +7,7 @@ from sqlalchemy import extract, func
 
 from app import app, db
 from models import User, Expense, Budget, Category
-from replit_auth import require_login, make_replit_blueprint
-
-app.register_blueprint(make_replit_blueprint(), url_prefix="/auth")
+from auth import require_login  # Import from our new auth system
 
 # Make session permanent
 @app.before_request
