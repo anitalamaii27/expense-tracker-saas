@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Yearly Summary - {{ year }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i data-feather="calendar" class="me-2"></i>
+                    {{ year }} Annual Summary
+                </h2>
+                <div>
+                    <a href="{{ url_for('export_csv') }}?year={{ year }}" class="btn btn-outline-primary">
+                        <i data-feather="download" class="me-2"></i>Export CSV
+                    </a>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-primary">Total Spent</h5>
+                            <h3 class="text-primary">${{ "%.2f"|format(total_amount) }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-info">Monthly Average</h5>
+                            <h3 class="text-info">${{ "%.2f"|format(total_amount / 12) }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-success">Total Expenses</h5>
+                            <h3 class="text-success">{{ expenses|length }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Breakdown -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Monthly Breakdown</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Month</th>
+                                            <th class="text-center">Expenses</th>
+                                            <th class="text-end">Total Amount</th>
+                                            <th class="text-end">% of Year</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for month_data in monthly_breakdown %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ month_data.month }}</strong>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-secondary">{{ month_data.count }}</span>
+                                            </td>
+                                            <td class="text-end">
+                                                <strong>${{ "%.2f"|format(month_data.total) }}</strong>
+                                            </td>
+                                            <td class="text-end">
+                                                {% if total_amount > 0 %}
+                                                    {{ "%.1f"|format((month_data.total / total_amount) * 100) }}%
+                                                {% else %}
+                                                    0.0%
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Expenses -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i data-feather="list" class="me-2"></i>
+                        All Expenses ({{ expenses|length }} items)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if expenses %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Category</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for expense in expenses %}
+                                    <tr>
+                                        <td>{{ expense.date.strftime('%m/%d/%Y') }}</td>
+                                        <td>{{ expense.description }}</td>
+                                        <td>
+                                            <span class="badge" style="background-color: {{ expense.category.color }};">
+                                                {{ expense.category.name }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <strong>${{ "%.2f"|format(expense.amount) }}</strong>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-primary">
+                                        <th colspan="3">Total</th>
+                                        <th class="text-end">${{ "%.2f"|format(total_amount) }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i data-feather="inbox" class="text-muted" style="width: 64px; height: 64px;"></i>
+                            <h5 class="text-muted mt-3">No expenses found</h5>
+                            <p class="text-muted">No expenses recorded for {{ year }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

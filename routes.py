@@ -247,6 +247,92 @@ def api_category_breakdown():
     
     return jsonify(data)
 
+# Monthly Summary Route (from your old code)
+@app.route('/monthly-summary')
+@require_login
+def monthly_summary():
+    year = request.args.get('year', datetime.now().year, type=int)
+    month = request.args.get('month', datetime.now().month, type=int)
+    
+    # Get expenses for specific month
+    monthly_expenses = Expense.query.filter(
+        Expense.user_id == current_user.id,
+        extract('month', Expense.date) == month,
+        extract('year', Expense.date) == year
+    ).order_by(Expense.date.desc()).all()
+    
+    # Calculate total
+    total_amount = sum(expense.amount for expense in monthly_expenses)
+    
+    # Get budget for this month
+    monthly_budget_obj = Budget.query.filter(
+        Budget.user_id == current_user.id,
+        Budget.month == month,
+        Budget.year == year,
+        Budget.period == 'monthly'
+    ).first()
+    
+    budget_amount = monthly_budget_obj.amount if monthly_budget_obj else 0
+    
+    return render_template('monthly_summary.html', 
+                         expenses=monthly_expenses,
+                         total_amount=total_amount,
+                         budget_amount=budget_amount,
+                         month=month,
+                         year=year,
+                         month_name=calendar.month_name[month])
+
+# Yearly Summary Route (from your old code)
+@app.route('/yearly-summary')
+@require_login
+def yearly_summary():
+    year = request.args.get('year', datetime.now().year, type=int)
+    
+    # Get expenses for specific year
+    yearly_expenses = Expense.query.filter(
+        Expense.user_id == current_user.id,
+        extract('year', Expense.date) == year
+    ).order_by(Expense.date.desc()).all()
+    
+    # Calculate total
+    total_amount = sum(expense.amount for expense in yearly_expenses)
+    
+    # Get monthly breakdown
+    monthly_breakdown = []
+    for month in range(1, 13):
+        month_expenses = [e for e in yearly_expenses if e.date.month == month]
+        month_total = sum(e.amount for e in month_expenses)
+        monthly_breakdown.append({
+            'month': calendar.month_name[month],
+            'total': month_total,
+            'count': len(month_expenses)
+        })
+    
+    return render_template('yearly_summary.html',
+                         expenses=yearly_expenses,
+                         total_amount=total_amount,
+                         year=year,
+                         monthly_breakdown=monthly_breakdown)
+
+# Export to CSV (from your old code)
+@app.route('/export-csv')
+@require_login
+def export_csv():
+    from flask import Response
+    # Get all expenses for current user
+    expenses = Expense.query.filter_by(user_id=current_user.id).order_by(Expense.date.desc()).all()
+    
+    # Create CSV content
+    output = "Date,Category,Amount,Description\\n"
+    for expense in expenses:
+        output += f"{expense.date},{expense.category.name},{expense.amount},{expense.description}\\n"
+    
+    return Response(
+        output,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment;filename=expenses.csv"}
+    )
+
 @app.route('/categories/add', methods=['POST'])
 @require_login
 def add_category():

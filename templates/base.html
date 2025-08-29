@@ -48,10 +48,25 @@
                             <i data-feather="target" class="me-1"></i>Budgets
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('analytics') }}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i data-feather="bar-chart-2" class="me-1"></i>Analytics
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('analytics') }}">
+                                <i data-feather="pie-chart" class="me-2"></i>Dashboard
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('monthly_summary') }}">
+                                <i data-feather="calendar" class="me-2"></i>Monthly Summary
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('yearly_summary') }}">
+                                <i data-feather="calendar" class="me-2"></i>Yearly Summary
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('export_csv') }}">
+                                <i data-feather="download" class="me-2"></i>Export CSV
+                            </a></li>
+                        </ul>
                     </li>
                 </ul>
                 

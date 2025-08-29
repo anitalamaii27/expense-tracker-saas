@@ -1,5 +1,58 @@
 /* Custom styles for ExpenseTracker */
 
+/* Enhanced table styling from your old code */
+.table {
+    background-color: var(--bs-body-bg);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th {
+    background-color: var(--bs-primary);
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Enhanced button styles */
+.btn {
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Summary cards enhancement */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Progress bar enhancements */
+.progress {
+    border-radius: 10px;
+    background-color: var(--bs-gray-200);
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+
 :root {
     --expense-primary: #007bff;
     --expense-success: #28a745;
