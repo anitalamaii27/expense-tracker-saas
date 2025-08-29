@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from app import db
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from flask_login import UserMixin
 from sqlalchemy import UniqueConstraint
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
+import secrets
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -56,6 +57,50 @@ class OAuth(OAuthConsumerMixin, db.Model):
         'provider',
         name='uq_user_browser_session_key_provider',
     ),)
+
+class PasswordResetToken(db.Model):
+    __tablename__ = 'password_reset_tokens'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String, db.ForeignKey('users.id'), nullable=False)
+    token = db.Column(db.String(100), unique=True, nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    is_used = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    
+    # Relationship
+    user = db.relationship('User', backref='password_reset_tokens')
+    
+    def __init__(self, user_id):
+        self.user_id = user_id
+        self.token = secrets.token_urlsafe(32)
+        self.expires_at = datetime.now() + timedelta(hours=1)  # Token expires in 1 hour
+    
+    @classmethod
+    def create_token(cls, user_id):
+        """Create a new password reset token"""
+        # Invalidate any existing tokens for this user
+        existing_tokens = cls.query.filter_by(user_id=user_id, is_used=False).all()
+        for token in existing_tokens:
+            token.is_used = True
+        
+        # Create new token
+        new_token = cls(user_id)
+        db.session.add(new_token)
+        db.session.commit()
+        return new_token
+    
+    @classmethod
+    def verify_token(cls, token_string):
+        """Verify if a token is valid and not expired"""
+        token = cls.query.filter_by(token=token_string, is_used=False).first()
+        if token and token.expires_at > datetime.now():
+            return token
+        return None
+    
+    def use_token(self):
+        """Mark the token as used"""
+        self.is_used = True
+        db.session.commit()
 
 class Category(db.Model):
     __tablename__ = 'categories'
